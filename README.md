@@ -285,6 +285,12 @@ Detailed description of the skill's purpose and capabilities.
 - Document prerequisites and dependencies
 - Include error handling guidance
 
+## Safety and permissions
+
+Skills may read files, access external services, require credentials, or perform real external actions. Before installing or contributing a write-capable skill, review its permission and side-effect boundary.
+
+See [Skill Risk Disclosure](docs/SKILL_RISK_DISCLOSURE.md) for the catalog's disclosure checklist. The checklist describes capabilities and risks; it is not a quality score.
+
 ## Contributing
 
 We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on:
