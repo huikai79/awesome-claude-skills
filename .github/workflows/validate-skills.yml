@@ -1,0 +1,75 @@
+name: Validate skills
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+
+      - name: Validate SKILL.md metadata
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          skill_files = sorted(Path(".").rglob("SKILL.md"))
+          if not skill_files:
+              raise SystemExit("No SKILL.md files found")
+
+          errors = []
+          names = {}
+
+          for path in skill_files:
+              text = path.read_text(encoding="utf-8")
+              if not text.startswith("---\n"):
+                  errors.append(f"{path}: missing YAML frontmatter")
+                  continue
+
+              parts = text.split("---", 2)
+              if len(parts) < 3:
+                  errors.append(f"{path}: malformed YAML frontmatter")
+                  continue
+
+              fields = {}
+              for line in parts[1].splitlines():
+                  if ":" not in line:
+                      continue
+                  key, value = line.split(":", 1)
+                  fields[key.strip()] = value.strip()
+
+              name = fields.get("name")
+              description = fields.get("description")
+
+              if not name:
+                  errors.append(f"{path}: missing name")
+              else:
+                  if name in names:
+                      errors.append(f"{path}: duplicate skill name '{name}' also used by {names[name]}")
+                  names[name] = path
+
+              if not description:
+                  errors.append(f"{path}: missing description")
+
+          if errors:
+              raise SystemExit("\n".join(errors))
+
+          print(f"Validated {len(skill_files)} skill files.")
+          PY

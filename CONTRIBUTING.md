@@ -19,6 +19,7 @@ All skills must:
 5. **Be tested** - Verify the skill works across Claude.ai, Claude Code, and/or API.
 6. **Be safe** - Confirm before destructive operations.
 7. **Be portable** - Work across Claude platforms when applicable.
+8. **Disclose side effects** - State network access, credentials, file writes, external actions, destructive actions, and confirmation boundaries when applicable. See [Skill Risk Disclosure](docs/SKILL_RISK_DISCLOSURE.md).
 
 ## Skill Structure
 
@@ -130,6 +131,7 @@ Your PR should:
   - Who uses this workflow
   - Attribution/inspiration source
   - Example of how it's used
+  - Risk disclosure when the skill uses credentials, network access, local/remote writes, or destructive actions
 
 ## Code of Conduct
 
